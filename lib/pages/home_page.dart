@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-import '../changeName_card.dart';
+import 'package:flutter/material.dart';
+import "package:http/http.dart" as http;
+import "dart:convert";
+
+// import '../changeName_card.dart';
 import '../drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,9 +16,32 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _nameController = TextEditingController();
 
   var myText = "Change Me";
+  // API url for accessing the data
+  // var url = Uri.https('www.jsonplaceholder.typicode.com', '/photos');
+  // var url = "https://jsonplaceholder.typicode.com/photos";
+  // var url = Uri.https("jsonplaceholder.typicode.com/photos");
+  // var uri = Uri.https("www.jsonplaceholder.typicode.com", "/photos");
+  var url = Uri.parse('https://jsonplaceholder.typicode.com/photos');
+  var data;
+
   @override
   void initState() {
     super.initState();
+    getData();
+  }
+
+  getData() async {
+    // var res = await http.get(url);
+    // print(res.body);
+    // data = jsonDecode(res.body);
+    // setState(() {});
+    //
+    var response = await http.get(url);
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
+    data = jsonDecode(response.body);
+    // print(data);
+    setState(() {});
   }
 
   @override
@@ -27,12 +54,23 @@ class _HomePageState extends State<HomePage> {
       // body: Container(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Card(
-            child:
-                ChangeNameCard(myText: myText, nameController: _nameController),
-          ),
-        ),
+        child: data != null
+            ? ListView.builder(
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(data[index]["title"]),
+                      subtitle: Text("ID: ${data[index]["id"]}"),
+                      leading: Image.network(data[index]["url"]),
+                    ),
+                  );
+                },
+                itemCount: data.length,
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
       // creates a menu icon
       drawer: MyDrawer(),
