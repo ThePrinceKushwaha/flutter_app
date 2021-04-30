@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/bg_image.dart';
-import 'package:flutter_app/pages/home_page.dart';
+import 'package:flutter_app/utils/constants.dart';
 
 class LoginPage extends StatelessWidget {
   final userNameController = TextEditingController();
@@ -49,7 +49,10 @@ class LoginPage extends StatelessWidget {
                           //     MaterialPageRoute(
                           //       builder: (context) => HomePage(),
                           //     ));
-                          Navigator.pushNamed(context, "/home");
+                          //
+                          Constants.prefs.setBool("LoggedIn", true);
+                          // Navigator.pushNamed(context, "/home");
+                          Navigator.pushReplacementNamed(context, "/home");
                         },
                         child: Text('Sign In'),
                       )
